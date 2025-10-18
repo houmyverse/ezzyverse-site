@@ -23,10 +23,10 @@
       overflow-x: hidden;
     }
 
-    /* Header (tweaked padding) */
+    /* Header */
     header {
       position: fixed; top: 0; left: 0; width: 100%;
-      padding: 1.2rem 4vw; /* increased slightly */
+      padding: 1.2rem 4vw;
       display: flex; align-items: center; justify-content: space-between;
       background: rgba(0,0,0,.25);
       backdrop-filter: blur(8px) saturate(140%);
@@ -36,12 +36,12 @@
     header.scrolled { background: rgba(0,0,0,0.55); }
 
     .logo { display: flex; align-items: center; gap: .6rem; }
-    .logo img { height: 70px; width: auto; } /* larger logo */
+    .logo img { height: 70px; width: auto; }
 
     nav { display: flex; align-items: center; gap: 2rem; position: relative; }
     nav a, nav button {
       color: var(--text); text-decoration: none; font-weight: 600; letter-spacing: .02em;
-      font-size: 1.1rem; /* larger menu text */
+      font-size: 1.1rem;
       background: transparent; border: 0; cursor: pointer; font: inherit;
     }
     nav a:hover, nav button:hover { color: var(--accent); }
@@ -59,11 +59,11 @@
     .menu a:hover { background: rgba(255,255,255,.08); color: #fff; }
     .dropdown:hover .menu, .dropdown:focus-within .menu { display: flex; }
 
-    /* Section (tighter layout) */
+    /* Sections */
     section {
       position: relative;
-      padding: 10vh 5vw; /* was 15vh 8vw */
-      min-height: 90vh;  /* was 100vh */
+      padding: 10vh 5vw;
+      min-height: 90vh;
       display: flex;
       flex-direction: column;
       justify-content: center;
@@ -85,30 +85,57 @@
            transition: transform .2s, background .2s; }
     .cta:hover { transform: translateY(-2px); background: rgba(255,255,255,.1); }
 
-    /* Slideshow layers */
+    /* Slideshow layers (no particles, no fog) */
     .bg-layer {
       position: absolute; inset: 0; background-size: cover; background-position: center;
-      transform: translateZ(-1px) scale(2);
-      z-index: -4; opacity: 0; transition: opacity var(--fade-duration) ease-in-out;
+      z-index: -4; opacity: 0;
+      transition: opacity var(--fade-duration) ease-in-out;
       filter: contrast(1.05) saturate(1.08) brightness(0.96);
-      animation: kenburns 24s ease-in-out infinite alternate;
     }
-    .bg-layer.active { opacity: 1; }
     .bg-overlay { position: absolute; inset: 0; background: var(--overlay); z-index: -3; }
-    @keyframes kenburns { 0% { transform: translateZ(-1px) scale(2) translate3d(0,0,0);} 100% { transform: translateZ(-1px) scale(2.2) translate3d(-1.25%, -1.25%, 0);} }
+    .bg-layer.active { opacity: 1; }
 
-    /* Particles */
-    #particles { position: fixed; inset: 0; z-index: -2; pointer-events: none; }
-
-    /* Grain */
+    /* Optional texture */
     .grain { position: absolute; inset: 0; z-index: -1; pointer-events: none;
              background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2' stitchTiles='stitch'/><feColorMatrix type='saturate' values='0'/><feComponentTransfer><feFuncA type='table' tableValues='0 0 0 0 0 .04 .05 .04 0 0 0 0'/></feComponentTransfer></filter><rect width='100%' height='100%' filter='url(%23n)' opacity='.35'/></svg>");
-             mix-blend-mode: soft-light; opacity: .35; animation: shimmer 3.8s linear infinite; }
+             mix-blend-mode: soft-light; opacity: .28; animation: shimmer 3.8s linear infinite; }
     @keyframes shimmer { 0% { transform: translate3d(0,0,0);} 100% { transform: translate3d(-120px,-120px,0);} }
     @media (prefers-reduced-motion: reduce) { .grain { animation: none; } }
+
+    /* === Transition modes ===
+       Set on <body data-transition="fade|blur|zoom|slide">
+    */
+    body[data-transition="fade"] .bg-layer {
+      transition: opacity var(--fade-duration) ease-in-out;
+    }
+
+    body[data-transition="blur"] .bg-layer {
+      transition: opacity var(--fade-duration) ease-in-out, filter var(--fade-duration) ease-in-out;
+      filter: blur(8px) brightness(0.9);
+    }
+    body[data-transition="blur"] .bg-layer.active {
+      filter: blur(0px) brightness(1.0);
+    }
+
+    body[data-transition="zoom"] .bg-layer {
+      transition: opacity var(--fade-duration) ease-in-out, transform var(--fade-duration) ease-in-out;
+      transform: scale(1.05);
+    }
+    body[data-transition="zoom"] .bg-layer.active {
+      transform: scale(1.0);
+    }
+
+    body[data-transition="slide"] .bg-layer {
+      transition: opacity var(--fade-duration) ease-in-out, transform var(--fade-duration) ease-in-out;
+      transform: translateX(2%);
+    }
+    body[data-transition="slide"] .bg-layer.active {
+      transform: translateX(0%);
+    }
   </style>
 </head>
-<body>
+<!-- Change the transition mode here: fade | blur | zoom | slide -->
+<body data-transition="fade">
   <header id="navbar">
     <div class="logo">
       <img src="logo2.png" alt="Logo">
@@ -127,11 +154,10 @@
     </nav>
   </header>
 
-  <!-- Background slideshow layers (index) -->
+  <!-- Background slideshow layers (clean) -->
   <div class="bg-layer" id="bgA" aria-hidden="true"></div>
   <div class="bg-layer" id="bgB" aria-hidden="true"></div>
   <div class="bg-overlay" aria-hidden="true"></div>
-  <canvas id="particles" aria-hidden="true"></canvas>
   <div class="grain" aria-hidden="true"></div>
 
   <section id="home">
@@ -184,33 +210,6 @@
     let showA = true; let order = shuffle(images); let i = 0; const slideDuration = 7000;
     (async function init(){ try{ const first = await loadImage(folder + order[0]); A.style.backgroundImage = `url(${first})`; A.classList.add('active'); if(order.length>1){ const second = await loadImage(folder + order[1]); B.style.backgroundImage = `url(${second})`; i = 1; } runLoop(); }catch(e){ console.error(e); } })();
     async function runLoop(){ while(true){ const nextIndex = (i + 1) % order.length; const nextSrc = folder + order[nextIndex]; try{ await loadImage(nextSrc); }catch(e){ order.splice(nextIndex,1); if(order.length===0) return; continue; } await new Promise(r=>setTimeout(r, slideDuration)); const show = showA ? B : A; const hide = showA ? A : B; show.style.backgroundImage = `url(${nextSrc})`; show.classList.add('active'); hide.classList.remove('active'); showA = !showA; i = nextIndex; }}
-
-    // Particles
-    const canvas = document.getElementById('particles');
-    const ctx = canvas.getContext('2d');
-    let w, h, particles = [];
-    const COUNT = 80;
-    function resize(){ w = canvas.width = innerWidth; h = canvas.height = innerHeight; }
-    window.addEventListener('resize', resize); resize();
-    function rand(min,max){ return Math.random()*(max-min)+min; }
-    function initParticles(){ particles = []; for(let i=0;i<COUNT;i++){ particles.push({ x: rand(0,w), y: rand(0,h), r: rand(0.5,2.2), a: rand(0.15,0.45), vx: rand(-0.15,0.15), vy: rand(-0.12,0.12) }); } }
-    initParticles();
-    let last = performance.now();
-    function frame(t){
-      const dt = Math.min(32, t-last); last = t;
-      ctx.clearRect(0,0,w,h);
-      ctx.fillStyle = 'rgba(255,255,255,0.85)';
-      for(const p of particles){
-        p.x += p.vx * dt; p.y += p.vy * dt;
-        if(p.x < -10) p.x = w+10; if(p.x > w+10) p.x = -10;
-        if(p.y < -10) p.y = h+10; if(p.y > h+10) p.y = -10;
-        ctx.globalAlpha = p.a;
-        ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, Math.PI*2); ctx.fill();
-      }
-      requestAnimationFrame(frame);
-    }
-    const prefersReduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if(!prefersReduce){ requestAnimationFrame(frame); }
   </script>
 </body>
 </html>
