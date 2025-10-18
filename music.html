@@ -4,7 +4,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Ezzyverse • Imagination in Motion</title>
+  <title>Ezzyverse • Music</title>
   
   <style>
     :root {
@@ -94,22 +94,23 @@
   </style>
 
   <style>
-    /* Slideshow layers */
-    .bg-layer {
-      position: absolute; inset: 0; background-size: cover; background-position: center;
-      transform: translateZ(-1px) scale(2);
-      z-index: -4; opacity: 0; transition: opacity var(--fade-duration) ease-in-out;
-      filter: contrast(1.05) saturate(1.08) brightness(0.96);
-      animation: kenburns 24s ease-in-out infinite alternate;
+    :root { --static-bg: url("images/static/music-hero.jpg"); } /* <-- change this filename */
+    .static-bg::after {
+      content: "";
+      position: absolute; inset: 0; pointer-events: none;
+      background:
+        radial-gradient(100px 100px at -10% 50%, rgba(255,255,255,0.0), rgba(255,255,255,0.0) 60%),
+        linear-gradient(120deg, rgba(255,255,255,0.0) 0%, rgba(255,255,255,0.35) 45%, rgba(255,255,255,0.0) 60%);
+      mix-blend-mode: screen;
+      transform: translateX(-30%);
+      animation: flare 10s ease-in-out infinite;
     }
-    .bg-layer.active { opacity: 1; }
-    @keyframes kenburns { 0% { transform: translateZ(-1px) scale(2) translate3d(0,0,0);} 100% { transform: translateZ(-1px) scale(2.2) translate3d(-1.25%, -1.25%, 0);} }
-
-    /* Particles canvas overlay */
-    #particles {
-      position: fixed; inset: 0; z-index: -2; pointer-events: none;
+    @keyframes flare {
+      0% { transform: translateX(-40%) rotate(0.001deg); opacity: .25; }
+      50% { transform: translateX(40%) rotate(0.001deg); opacity: .6; }
+      100% { transform: translateX(-40%) rotate(0.001deg); opacity: .25; }
     }
-    .bg-overlay { z-index: -3; }
+    @media (prefers-reduced-motion: reduce){ .static-bg::after { animation: none; } }
   </style>
 </head>
 <body>
@@ -132,73 +133,29 @@
     </nav>
   </header>
 
-
-  <!-- Background slideshow layers (index) -->
-  <div class="bg-layer" id="bgA" aria-hidden="true"></div>
-  <div class="bg-layer" id="bgB" aria-hidden="true"></div>
-  <div class="bg-overlay" aria-hidden="true"></div>
-  <canvas id="particles" aria-hidden="true"></canvas>
+  <div class="static-bg"></div>
+  <div class="static-overlay"></div>
   <div class="grain" aria-hidden="true"></div>
 
-  <section id="home">
+  <section id="music">
     <div class="content">
-      <div class="eyebrow">Ezzyverse</div>
-      <h1>We blend AI, art, and music into stories you can feel.</h1>
-      <p>From poster‑ready artwork and apparel designs to cinematic soundscapes, we build cohesive visuals and music ready for real‑world use.</p>
-      <a class="cta" href="art.html">See Our Work → Art</a>
+      <div class="eyebrow">Our Work</div>
+      <h1>Original Music for Stories, Social, and Streaming</h1>
+      <p>
+        We produce original tracks, duets, and cinematic cues designed for short‑form video, promos, and world‑building.
+        You’ll find our latest releases on <strong>YouTube</strong> and <strong>Spotify</strong>, with clean versions and
+        alternate mixes available on request.
+      </p>
+      <p>
+        <strong>What we offer:</strong> Theme pieces, ambient intros, upbeat club tracks, and lyrical songs with male/female vocals.
+        We can tailor tempo, mood, and structure to match your visuals.
+      </p>
+      <p>
+        Want links added here? Send your channel or artist URLs and we’ll drop in the embeds.
+      </p>
+      <a class="cta" href="index.html#about">Back to Home</a>
     </div>
   </section>
-
-  <section id="about">
-    <div class="content">
-      <h1>What We Do</h1>
-      <p><strong>Art:</strong> Poster illustrations, t‑shirt designs, and print‑ready assets with consistent styles.</p>
-      <p><strong>Music:</strong> Original tracks and cues for social, ads, and storytelling—on YouTube & Spotify.</p>
-      <p><strong>Custom:</strong> Cohesive series, style guides, and deliverables for web and print.</p>
-      <a class="cta" href="music.html">Listen → Music</a>
-    </div>
-  </section>
-
-  <script>
-    // Slideshow
-    const folder = 'images/homepage/backgrounds/';
-    const images = ['bg1.jpg','bg2.png','bg3.png','bg4.png','bg5.png','bg6.png'];
-    function shuffle(arr){ const a = arr.slice(); for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
-    function loadImage(src){ return new Promise((res,rej)=>{ const im=new Image(); im.onload=()=>res(src); im.onerror=()=>rej(new Error('Failed '+src)); im.src=src; }); }
-    const A = document.getElementById('bgA'); const B = document.getElementById('bgB');
-    let showA = true; let order = shuffle(images); let i = 0; const slideDuration = 7000;
-    (async function init(){ try{ const first = await loadImage(folder + order[0]); A.style.backgroundImage = `url(${first})`; A.classList.add('active'); if(order.length>1){ const second = await loadImage(folder + order[1]); B.style.backgroundImage = `url(${second})`; i = 1; } runLoop(); }catch(e){ console.error(e); } })();
-    async function runLoop(){ while(true){ const nextIndex = (i + 1) % order.length; const nextSrc = folder + order[nextIndex]; try{ await loadImage(nextSrc); }catch(e){ order.splice(nextIndex,1); if(order.length===0) return; continue; } await new Promise(r=>setTimeout(r, slideDuration)); const show = showA ? B : A; const hide = showA ? A : B; show.style.backgroundImage = `url(${nextSrc})`; show.classList.add('active'); hide.classList.remove('active'); showA = !showA; i = nextIndex; }}
-
-    // Particles (lightweight)
-    const canvas = document.getElementById('particles');
-    const ctx = canvas.getContext('2d');
-    let w, h, particles = [];
-    const COUNT = 80; // tune density
-    function resize(){ w = canvas.width = innerWidth; h = canvas.height = innerHeight; }
-    window.addEventListener('resize', resize); resize();
-    function rand(min,max){ return Math.random()*(max-min)+min; }
-    function initParticles(){ particles = []; for(let i=0;i<COUNT;i++){ particles.push({ x: rand(0,w), y: rand(0,h), r: rand(0.5,2.2), a: rand(0.15,0.45), vx: rand(-0.15,0.15), vy: rand(-0.12,0.12) }); } }
-    initParticles();
-    let last = performance.now();
-    function frame(t){
-      const dt = Math.min(32, t-last); last = t;
-      ctx.clearRect(0,0,w,h);
-      ctx.fillStyle = 'rgba(255,255,255,0.85)';
-      for(const p of particles){
-        p.x += p.vx * dt; p.y += p.vy * dt;
-        if(p.x < -10) p.x = w+10; if(p.x > w+10) p.x = -10;
-        if(p.y < -10) p.y = h+10; if(p.y > h+10) p.y = -10;
-        ctx.globalAlpha = p.a;
-        ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, Math.PI*2); ctx.fill();
-      }
-      requestAnimationFrame(frame);
-    }
-    // Respect reduced motion
-    const prefersReduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if(!prefersReduce){ requestAnimationFrame(frame); }
-
-  </script>
   
   <script>
     const navbar = document.getElementById('navbar');
