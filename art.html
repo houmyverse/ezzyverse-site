@@ -1,172 +1,65 @@
-
 <!doctype html>
 <html lang="en">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Ezzyverse • Art</title>
-  
   <style>
     :root {
-      --text: #f4f6fb;
-      --accent: #a7b6ff;
+      --text:#f4f6fb; --accent:#a7b6ff;
       --overlay: linear-gradient(180deg, rgba(10,10,14,.55) 0%, rgba(10,10,14,.35) 40%, rgba(10,10,14,.65) 100%);
-      --fade-duration: 1400ms;
-      --slide-duration: 7000ms;
-      --menu-bg: rgba(0,0,0,.35);
-      --menu-border: rgba(255,255,255,.15);
-      --static-bg: url("images/static/art-hero.png"); /* <-- change per page if needed */
+      --fade-duration: 1400ms; --slide-duration: 7000ms;
     }
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    html, body { height: 100%; }
-    body {
-      font-family: system-ui, -apple-system, Segoe UI, Roboto, Inter, "Helvetica Neue", Arial, sans-serif;
-      color: var(--text);
-      background: #0b0d12;
-      overflow-x: hidden;
-    }
-    header {
-      position: fixed; top: 0; left: 0; width: 100%;
-      padding: 1rem 3vw;
-      display: flex; align-items: center; justify-content: space-between;
-      background: rgba(0,0,0,.25);
-      backdrop-filter: blur(8px) saturate(140%);
-      z-index: 20;
-      transition: background .3s ease;
-    }
-    header.scrolled { background: rgba(0,0,0,0.55); }
-    .logo { display: flex; align-items: center; gap: .6rem; }
-    .logo img { height: 70px; width: auto; }
-    nav { display: flex; align-items: center; gap: 2rem; position: relative; }
-    nav a, nav button {
-      color: var(--text); text-decoration: none; font-weight: 600; letter-spacing: .02em;
-      background: transparent; border: 0; cursor: pointer; font: inherit;
-    }
-    nav a:hover, nav button:hover { color: var(--accent); }
-    .dropdown { position: relative; }
-    .dropdown > button { display: inline-flex; align-items: center; gap: .35rem; }
-    .dropdown > button::after { content: "▾"; font-size: .9em; opacity: .8; transform: translateY(-1px); }
-    .menu {
-      position: absolute; top: 125%; left: 0; min-width: 180px; padding: .5rem;
-      display: none; flex-direction: column; gap: .25rem;
-      background: var(--menu-bg); border: 1px solid var(--menu-border); border-radius: 12px;
-      backdrop-filter: blur(8px) saturate(140%); box-shadow: 0 10px 30px rgba(0,0,0,.35); z-index: 30;
-    }
-    .menu a { padding: .6rem .75rem; border-radius: 10px; }
-    .menu a:hover { background: rgba(255,255,255,.08); color: #fff; }
-    .dropdown:hover .menu, .dropdown:focus-within .menu { display: flex; }
+    *{ box-sizing:border-box; margin:0; padding:0; }
+    html, body{ height:100%; }
+    body{ font-family: system-ui, -apple-system, Segoe UI, Roboto, Inter, "Helvetica Neue", Arial, sans-serif; color:var(--text); background:#0b0d12; overflow-x:hidden; }
+    section{ position:relative; padding:10vh 5vw; min-height:90vh; display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center; z-index:1; }
+    .content{ width:min(92vw,980px); padding:clamp(20px,3vw,44px); border-radius:22px; backdrop-filter:blur(8px) saturate(110%); background:rgba(16,18,24,.34); box-shadow:0 10px 40px rgba(0,0,0,.35); }
+    .eyebrow{ letter-spacing:.24em; text-transform:uppercase; font-size:clamp(.72rem,1.3vw,.9rem); opacity:.8; }
+    h1{ margin:.35em 0 .2em; font-size:clamp(1.8rem,5vw,3.6rem); line-height:1.05; }
+    p{ margin:.6em auto 1.25em; font-size:clamp(1rem,1.4vw,1.15rem); max-width:65ch; opacity:.95; }
+    .cta{ display:inline-block; padding:.9em 1.15em; border-radius:14px; border:1px solid rgba(255,255,255,.18); background:rgba(255,255,255,.06); color:var(--text); text-decoration:none; font-weight:600; transition:transform .2s, background .2s; }
+    .cta:hover{ transform:translateY(-2px); background:rgba(255,255,255,.1); }
+    .bg-overlay { position:absolute; inset:0; background:var(--overlay); z-index:-3; }
+    .grain { position:absolute; inset:0; z-index:-1; pointer-events:none; background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2' stitchTiles='stitch'/><feColorMatrix type='saturate' values='0'/><feComponentTransfer><feFuncA type='table' tableValues='0 0 0 0 0 .04 .05 .04 0 0 0 0'/></feComponentTransfer></filter><rect width='100%' height='100%' filter='url(%23n)' opacity='.35'/></svg>"); mix-blend-mode:soft-light; opacity:.28; animation:shimmer 3.8s linear infinite; }
+    @keyframes shimmer { 0%{ transform:translate3d(0,0,0); } 100%{ transform:translate3d(-120px,-120px,0); } }
+    @media (prefers-reduced-motion: reduce) { .grain{ animation:none; } }
+    
+:root { --static-bg: url("images/static/art-hero.jpg"); } /* change filename/path */
+.static-bg{ position:fixed; inset:0; z-index:-2; background-image:var(--static-bg); background-size:cover; background-position:center; filter: blur(0px) brightness(0.95); animation: blurPulse 16s ease-in-out infinite; }
+.static-overlay{ position:fixed; inset:0; z-index:-1; background:var(--overlay); }
+@keyframes blurPulse{ 0%{ filter: blur(0px) brightness(0.95);} 50%{ filter: blur(2.2px) brightness(1.02);} 100%{ filter: blur(0px) brightness(0.95);} }
+@media (prefers-reduced-motion: reduce){ .static-bg{ animation:none; } }
 
-    section {
-      position: relative; padding: 15vh 8vw; min-height: 100vh;
-      display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 1;
-      text-align: center;
-    }
-    .content {
-      width: min(92vw, 980px); padding: clamp(20px, 3vw, 44px);
-      border-radius: 22px; backdrop-filter: blur(8px) saturate(110%);
-      background: rgba(16,18,24,.34); box-shadow: 0 10px 40px rgba(0,0,0,.35);
-      text-align: center;
-    }
-    .eyebrow { letter-spacing: .24em; text-transform: uppercase; font-size: clamp(.72rem, 1.3vw, .9rem); opacity: .8; }
-    h1 { margin: .35em 0 .2em; font-size: clamp(1.8rem, 5vw, 3.6rem); line-height: 1.05; }
-    p { margin: .6em auto 1.25em; font-size: clamp(1rem, 1.4vw, 1.15rem); max-width: 65ch; opacity: .95; }
-    .cta { display: inline-block; padding: .9em 1.15em; border-radius: 14px; border: 1px solid rgba(255,255,255,.18);
-           background: rgba(255,255,255,.06); color: var(--text); text-decoration: none; font-weight: 600;
-           transition: transform .2s, background .2s; }
-    .cta:hover { transform: translateY(-2px); background: rgba(255,255,255,.1); }
-
-    /* Static background for subpages */
-    .static-bg {
-      position: fixed; inset: 0; z-index: -2;
-      background-image: var(--static-bg); background-size: cover; background-position: center;
-    }
-    .static-overlay { position: fixed; inset: 0; z-index: -1; background: var(--overlay); }
-
-    /* Shared extras */
-    .bg-overlay { position: absolute; inset: 0; background: var(--overlay); z-index: -3; }
-    .grain { position: absolute; inset: 0; z-index: -1; pointer-events: none;
-             background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2' stitchTiles='stitch'/><feColorMatrix type='saturate' values='0'/><feComponentTransfer><feFuncA type='table' tableValues='0 0 0 0 0 .04 .05 .04 0 0 0 0'/></feComponentTransfer></filter><rect width='100%' height='100%' filter='url(%23n)' opacity='.35'/></svg>");
-             mix-blend-mode: soft-light; opacity: .35; animation: shimmer 3.8s linear infinite; }
-    @keyframes shimmer { 0% { transform: translate3d(0,0,0);} 100% { transform: translate3d(-120px,-120px,0);} }
-    @media (prefers-reduced-motion: reduce) {
-      .grain { animation: none; }
-    }
-  </style>
-
-  <style>
-    :root { --static-bg: url("images/static/art-hero.jpg"); } /* <-- change this filename */
-    .static-bg { filter: blur(0px) brightness(0.95); }
-    @keyframes blurPulse { 0% { filter: blur(0px) brightness(0.95); } 50% { filter: blur(2.2px) brightness(1.02); } 100% { filter: blur(0px) brightness(0.95); } }
-    .static-bg { animation: blurPulse 16s ease-in-out infinite; }
-    @media (prefers-reduced-motion: reduce){ .static-bg { animation: none; } }
   </style>
 </head>
-<body>
+<body data-transition="fade">
+  <div id="site-header"></div>
+<script>
+(async function(){
+  try{
+    const el=document.getElementById('site-header');
+    const res=await fetch('partials/header.html',{cache:'no-cache'});
+    el.innerHTML=await res.text();
+  }catch(e){ console.error('Header load failed',e); }
+})();
+</script>
+<div class="static-bg"></div>
+<div class="static-overlay"></div>
+<div class="grain" aria-hidden="true"></div>
 
-  <header id="navbar">
-    <div class="logo">
-      <img src="logo2.png" alt="Logo">
-      <span>Ezzyverse</span>
-    </div>
-    <nav>
-      <a href="index.html#home">Home</a>
-      <div class="dropdown">
-        <button id="ourWorkBtn" aria-haspopup="true" aria-expanded="false">Our Work</button>
-        <div class="menu" role="menu" aria-label="Our Work">
-          <a href="art.html" role="menuitem">Art</a>
-          <a href="music.html" role="menuitem">Music</a>
-        </div>
-      </div>
-      <a href="index.html#about">About Us</a>
-    </nav>
-  </header>
-
-  <div class="static-bg"></div>
-  <div class="static-overlay"></div>
-  <div class="grain" aria-hidden="true"></div>
-
-  <section id="art">
-    <div class="content">
-      <div class="eyebrow">Our Work</div>
-      <h1>Art Collections for Print & Digital</h1>
-      <p>
-        We create bold, clean visuals—poster art, apparel graphics, and collectible prints—built for consistency across series.
-        Each collection follows a defined style guide so you can mix and match pieces without losing the look.
-      </p>
-      <p>
-        <strong>What’s available:</strong> Limited‑run posters, t‑shirt designs, and high‑resolution digital prints. Custom colorways,
-        sizes, and typography options are available by request.
-      </p>
-      <p>
-        <strong>Highlights:</strong> Retro‑futurist posters, Persian‑inspired motifs, minimalist typographic designs, and character‑based sets.
-      </p>
-      <a class="cta" href="index.html#about">Back to Home</a>
-    </div>
-  </section>
   
-  <script>
-    const navbar = document.getElementById('navbar');
-    window.addEventListener('scroll', () => {
-      navbar.classList.toggle('scrolled', window.scrollY > 60);
-    });
-    const ourWorkBtn = document.getElementById('ourWorkBtn');
-    const dropdown = ourWorkBtn ? ourWorkBtn.parentElement : null;
-    ourWorkBtn && ourWorkBtn.addEventListener('click', (e) => {
-      e.stopPropagation();
-      const menu = dropdown.querySelector('.menu');
-      const open = menu.style.display === 'flex';
-      menu.style.display = open ? 'none' : 'flex';
-      ourWorkBtn.setAttribute('aria-expanded', String(!open));
-    });
-    document.addEventListener('click', (e) => {
-      if (!dropdown) return;
-      const menu = dropdown.querySelector('.menu');
-      if (menu && !dropdown.contains(e.target)) {
-        menu.style.display = 'none';
-        ourWorkBtn && ourWorkBtn.setAttribute('aria-expanded', 'false');
-      }
-    });
-  </script>
+<section id="art">
+  <div class="content">
+    <div class="eyebrow">Our Work</div>
+    <h1>Art Collections for Print & Digital</h1>
+    <p>We create bold, clean visuals—poster art, apparel graphics, and collectible prints—built for consistency across series.</p>
+    <p><strong>Available:</strong> Limited‑run posters, t‑shirt designs, and high‑resolution digital prints. Custom colorways, sizes, and typography options by request.</p>
+    <p><strong>Highlights:</strong> Retro‑futurist posters, Persian‑inspired motifs, minimalist typographic designs, and character‑based sets.</p>
+    <a class="cta" href="index.html#about">Back to Home</a>
+  </div>
+</section>
 
+  
 </body>
 </html>

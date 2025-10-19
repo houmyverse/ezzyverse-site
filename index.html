@@ -6,210 +6,77 @@
   <title>Ezzyverse • Imagination in Motion</title>
   <style>
     :root {
-      --text: #f4f6fb;
-      --accent: #a7b6ff;
+      --text:#f4f6fb; --accent:#a7b6ff;
       --overlay: linear-gradient(180deg, rgba(10,10,14,.55) 0%, rgba(10,10,14,.35) 40%, rgba(10,10,14,.65) 100%);
-      --fade-duration: 7000ms;
-      --slide-duration: 20000ms;
-      --menu-bg: rgba(0,0,0,.35);
-      --menu-border: rgba(255,255,255,.15);
+      --fade-duration: 1400ms; --slide-duration: 7000ms;
     }
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    html, body { height: 100%; }
-    body {
-      font-family: system-ui, -apple-system, Segoe UI, Roboto, Inter, "Helvetica Neue", Arial, sans-serif;
-      color: var(--text);
-      background: #0b0d12;
-      overflow-x: hidden;
-    }
+    *{ box-sizing:border-box; margin:0; padding:0; }
+    html, body{ height:100%; }
+    body{ font-family: system-ui, -apple-system, Segoe UI, Roboto, Inter, "Helvetica Neue", Arial, sans-serif; color:var(--text); background:#0b0d12; overflow-x:hidden; }
+    section{ position:relative; padding:10vh 5vw; min-height:90vh; display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center; z-index:1; }
+    .content{ width:min(92vw,980px); padding:clamp(20px,3vw,44px); border-radius:22px; backdrop-filter:blur(8px) saturate(110%); background:rgba(16,18,24,.34); box-shadow:0 10px 40px rgba(0,0,0,.35); }
+    .eyebrow{ letter-spacing:.24em; text-transform:uppercase; font-size:clamp(.72rem,1.3vw,.9rem); opacity:.8; }
+    h1{ margin:.35em 0 .2em; font-size:clamp(1.8rem,5vw,3.6rem); line-height:1.05; }
+    p{ margin:.6em auto 1.25em; font-size:clamp(1rem,1.4vw,1.15rem); max-width:65ch; opacity:.95; }
+    .cta{ display:inline-block; padding:.9em 1.15em; border-radius:14px; border:1px solid rgba(255,255,255,.18); background:rgba(255,255,255,.06); color:var(--text); text-decoration:none; font-weight:600; transition:transform .2s, background .2s; }
+    .cta:hover{ transform:translateY(-2px); background:rgba(255,255,255,.1); }
+    .bg-overlay { position:absolute; inset:0; background:var(--overlay); z-index:-3; }
+    .grain { position:absolute; inset:0; z-index:-1; pointer-events:none; background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2' stitchTiles='stitch'/><feColorMatrix type='saturate' values='0'/><feComponentTransfer><feFuncA type='table' tableValues='0 0 0 0 0 .04 .05 .04 0 0 0 0'/></feComponentTransfer></filter><rect width='100%' height='100%' filter='url(%23n)' opacity='.35'/></svg>"); mix-blend-mode:soft-light; opacity:.28; animation:shimmer 3.8s linear infinite; }
+    @keyframes shimmer { 0%{ transform:translate3d(0,0,0); } 100%{ transform:translate3d(-120px,-120px,0); } }
+    @media (prefers-reduced-motion: reduce) { .grain{ animation:none; } }
+    
+.bg-layer{ position:absolute; inset:0; background-size:cover; background-position:center; z-index:-4; opacity:0; transition:opacity var(--fade-duration) ease-in-out; filter:contrast(1.05) saturate(1.08) brightness(0.96); }
+.bg-layer.active{ opacity:1; }
 
-    /* Header */
-    header {
-      position: fixed; top: 0; left: 0; width: 100%;
-      padding: 1.2rem 4vw;
-      display: flex; align-items: center; justify-content: space-between;
-      background: rgba(0,0,0,.25);
-      backdrop-filter: blur(8px) saturate(140%);
-      z-index: 20;
-      transition: background .3s ease;
-    }
-    header.scrolled { background: rgba(0,0,0,0.55); }
-
-    .logo { display: flex; align-items: center; gap: .6rem; }
-    .logo img { height: 70px; width: auto; }
-
-    nav { display: flex; align-items: center; gap: 2rem; position: relative; }
-    nav a, nav button {
-      color: var(--text); text-decoration: none; font-weight: 600; letter-spacing: .02em;
-      font-size: 1.1rem;
-      background: transparent; border: 0; cursor: pointer; font: inherit;
-    }
-    nav a:hover, nav button:hover { color: var(--accent); }
-
-    .dropdown { position: relative; }
-    .dropdown > button { display: inline-flex; align-items: center; gap: .35rem; }
-    .dropdown > button::after { content: "▾"; font-size: .9em; opacity: .8; transform: translateY(-1px); }
-    .menu {
-      position: absolute; top: 125%; left: 0; min-width: 180px; padding: .5rem;
-      display: none; flex-direction: column; gap: .25rem;
-      background: var(--menu-bg); border: 1px solid var(--menu-border); border-radius: 12px;
-      backdrop-filter: blur(8px) saturate(140%); box-shadow: 0 10px 30px rgba(0,0,0,.35); z-index: 30;
-    }
-    .menu a { padding: .6rem .75rem; border-radius: 10px; }
-    .menu a:hover { background: rgba(255,255,255,.08); color: #fff; }
-    .dropdown:hover .menu, .dropdown:focus-within .menu { display: flex; }
-
-    /* Sections */
-    section {
-      position: relative;
-      padding: 10vh 5vw;
-      min-height: 90vh;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      z-index: 1;
-      text-align: center;
-    }
-    .content {
-      width: min(92vw, 980px); padding: clamp(20px, 3vw, 44px);
-      border-radius: 22px; backdrop-filter: blur(8px) saturate(110%);
-      background: rgba(16,18,24,.34); box-shadow: 0 10px 40px rgba(0,0,0,.35);
-      text-align: center;
-    }
-    .eyebrow { letter-spacing: .24em; text-transform: uppercase; font-size: clamp(.72rem, 1.3vw, .9rem); opacity: .8; }
-    h1 { margin: .35em 0 .2em; font-size: clamp(1.8rem, 5vw, 3.6rem); line-height: 1.05; }
-    p { margin: .6em auto 1.25em; font-size: clamp(1rem, 1.4vw, 1.15rem); max-width: 65ch; opacity: .95; }
-    .cta { display: inline-block; padding: .9em 1.15em; border-radius: 14px; border: 1px solid rgba(255,255,255,.18);
-           background: rgba(255,255,255,.06); color: var(--text); text-decoration: none; font-weight: 600;
-           transition: transform .2s, background .2s; }
-    .cta:hover { transform: translateY(-2px); background: rgba(255,255,255,.1); }
-
-    /* Slideshow layers (no particles, no fog) */
-    .bg-layer {
-      position: absolute; inset: 0; background-size: cover; background-position: center;
-      z-index: -4; opacity: 0;
-      transition: opacity var(--fade-duration) ease-in-out;
-      filter: contrast(1.05) saturate(1.08) brightness(0.96);
-    }
-    .bg-overlay { position: absolute; inset: 0; background: var(--overlay); z-index: -3; }
-    .bg-layer.active { opacity: 1; }
-
-    /* Optional texture */
-    .grain { position: absolute; inset: 0; z-index: -1; pointer-events: none;
-             background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2' stitchTiles='stitch'/><feColorMatrix type='saturate' values='0'/><feComponentTransfer><feFuncA type='table' tableValues='0 0 0 0 0 .04 .05 .04 0 0 0 0'/></feComponentTransfer></filter><rect width='100%' height='100%' filter='url(%23n)' opacity='.35'/></svg>");
-             mix-blend-mode: soft-light; opacity: .28; animation: shimmer 3.8s linear infinite; }
-    @keyframes shimmer { 0% { transform: translate3d(0,0,0);} 100% { transform: translate3d(-120px,-120px,0);} }
-    @media (prefers-reduced-motion: reduce) { .grain { animation: none; } }
-
-    /* === Transition modes ===
-       Set on <body data-transition="fade|blur|zoom|slide">
-    */
-    body[data-transition="fade"] .bg-layer {
-      transition: opacity var(--fade-duration) ease-in-out;
-    }
-
-    body[data-transition="blur"] .bg-layer {
-      transition: opacity var(--fade-duration) ease-in-out, filter var(--fade-duration) ease-in-out;
-      filter: blur(8px) brightness(0.9);
-    }
-    body[data-transition="blur"] .bg-layer.active {
-      filter: blur(0px) brightness(1.0);
-    }
-
-    body[data-transition="zoom"] .bg-layer {
-      transition: opacity var(--fade-duration) ease-in-out, transform var(--fade-duration) ease-in-out;
-      transform: scale(1.05);
-    }
-    body[data-transition="zoom"] .bg-layer.active {
-      transform: scale(1.0);
-    }
-
-    body[data-transition="slide"] .bg-layer {
-      transition: opacity var(--fade-duration) ease-in-out, transform var(--fade-duration) ease-in-out;
-      transform: translateX(2%);
-    }
-    body[data-transition="slide"] .bg-layer.active {
-      transform: translateX(0%);
-    }
   </style>
 </head>
-<!-- Change the transition mode here: fade | blur | zoom | slide -->
 <body data-transition="fade">
-  <header id="navbar">
-    <div class="logo">
-      <img src="logo2.png" alt="Logo">
-      <span>Ezzyverse</span>
-    </div>
-    <nav>
-      <a href="index.html#home">Home</a>
-      <div class="dropdown">
-        <button id="ourWorkBtn" aria-haspopup="true" aria-expanded="false">Our Work</button>
-        <div class="menu" role="menu" aria-label="Our Work">
-          <a href="art.html" role="menuitem">Art</a>
-          <a href="music.html" role="menuitem">Music</a>
-        </div>
-      </div>
-      <a href="index.html#about">About Us</a>
-    </nav>
-  </header>
+  <div id="site-header"></div>
+<script>
+(async function(){
+  try{
+    const el=document.getElementById('site-header');
+    const res=await fetch('partials/header.html',{cache:'no-cache'});
+    el.innerHTML=await res.text();
+  }catch(e){ console.error('Header load failed',e); }
+})();
+</script>
+<div class="bg-layer" id="bgA" aria-hidden="true"></div>
+<div class="bg-layer" id="bgB" aria-hidden="true"></div>
+<div class="bg-overlay" aria-hidden="true"></div>
+<div class="grain" aria-hidden="true"></div>
 
-  <!-- Background slideshow layers (clean) -->
-  <div class="bg-layer" id="bgA" aria-hidden="true"></div>
-  <div class="bg-layer" id="bgB" aria-hidden="true"></div>
-  <div class="bg-overlay" aria-hidden="true"></div>
-  <div class="grain" aria-hidden="true"></div>
+  
+<section id="home">
+  <div class="content">
+    <div class="eyebrow">Ezzyverse</div>
+    <h1>We blend AI, art, and music into stories you can feel.</h1>
+    <p>From poster‑ready artwork and apparel designs to cinematic soundscapes, we build cohesive visuals and music ready for real‑world use.</p>
+    <a class="cta" href="art.html">See Our Work → Art</a>
+  </div>
+</section>
+<section id="about">
+  <div class="content">
+    <h1>What We Do</h1>
+    <p><strong>Art:</strong> Poster illustrations, t‑shirt designs, and print‑ready assets with consistent styles.</p>
+    <p><strong>Music:</strong> Original tracks and cues for social, ads, and storytelling—on YouTube & Spotify.</p>
+    <p><strong>Custom:</strong> Cohesive series, style guides, and deliverables for web and print.</p>
+    <a class="cta" href="music.html">Listen → Music</a>
+  </div>
+</section>
 
-  <section id="home">
-    <div class="content">
-      <div class="eyebrow">Ezzyverse</div>
-      <h1>We blend AI, art, and music into stories you can feel.</h1>
-      <p>From poster‑ready artwork and apparel designs to cinematic soundscapes, we build cohesive visuals and music ready for real‑world use.</p>
-      <a class="cta" href="art.html">See Our Work → Art</a>
-    </div>
-  </section>
+  
+<script>
+  // Slideshow
+  const folder = 'images/homepage/backgrounds/';
+  const images = ['bg1.jpg','bg2.png','bg3.png','bg4.png','bg5.png','bg6.png'];
+  function shuffle(arr){ const a = arr.slice(); for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
+  function loadImage(src){ return new Promise((res,rej)=>{ const im=new Image(); im.onload=()=>res(src); im.onerror=()=>rej(new Error('Failed '+src)); im.src=src; }); }
+  const A = document.getElementById('bgA'); const B = document.getElementById('bgB');
+  let showA = true; let order = shuffle(images); let i = 0; const slideDuration = 7000;
+  (async function init(){ try{ const first = await loadImage(folder + order[0]); A.style.backgroundImage = `url(${first})`; A.classList.add('active'); if(order.length>1){ const second = await loadImage(folder + order[1]); B.style.backgroundImage = `url(${second})`; i = 1; } runLoop(); }catch(e){ console.error(e); } })();
+  async function runLoop(){ while(true){ const nextIndex = (i + 1) % order.length; const nextSrc = folder + order[nextIndex]; try{ await loadImage(nextSrc); }catch(e){ order.splice(nextIndex,1); if(order.length===0) return; continue; } await new Promise(r=>setTimeout(r, slideDuration)); const show = showA ? B : A; const hide = showA ? A : B; show.style.backgroundImage = `url(${nextSrc})`; show.classList.add('active'); hide.classList.remove('active'); showA = !showA; i = nextIndex; }}
+</script>
 
-  <section id="about">
-    <div class="content">
-      <h1>What We Do</h1>
-      <p><strong>Art:</strong> Poster illustrations, t‑shirt designs, and print‑ready assets with consistent styles.</p>
-      <p><strong>Music:</strong> Original tracks and cues for social, ads, and storytelling—on YouTube & Spotify.</p>
-      <p><strong>Custom:</strong> Cohesive series, style guides, and deliverables for web and print.</p>
-      <a class="cta" href="music.html">Listen → Music</a>
-    </div>
-  </section>
-
-  <script>
-    // Navbar & dropdown
-    const navbar = document.getElementById('navbar');
-    window.addEventListener('scroll', () => { navbar.classList.toggle('scrolled', window.scrollY > 60); });
-    const ourWorkBtn = document.getElementById('ourWorkBtn');
-    const dropdown = ourWorkBtn ? ourWorkBtn.parentElement : null;
-    ourWorkBtn && ourWorkBtn.addEventListener('click', (e) => {
-      e.stopPropagation();
-      const menu = dropdown.querySelector('.menu');
-      const open = menu.style.display === 'flex';
-      menu.style.display = open ? 'none' : 'flex';
-      ourWorkBtn.setAttribute('aria-expanded', String(!open));
-    });
-    document.addEventListener('click', (e) => {
-      if (!dropdown) return;
-      const menu = dropdown.querySelector('.menu');
-      if (menu && !dropdown.contains(e.target)) {
-        menu.style.display = 'none';
-        ourWorkBtn && ourWorkBtn.setAttribute('aria-expanded', 'false');
-      }
-    });
-
-    // Slideshow
-    const folder = 'images/homepage/backgrounds/';
-    const images = ['bg1.jpg','bg2.png','bg3.png','bg4.png','bg5.png','bg6.png'];
-    function shuffle(arr){ const a = arr.slice(); for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
-    function loadImage(src){ return new Promise((res,rej)=>{ const im=new Image(); im.onload=()=>res(src); im.onerror=()=>rej(new Error('Failed '+src)); im.src=src; }); }
-    const A = document.getElementById('bgA'); const B = document.getElementById('bgB');
-    let showA = true; let order = shuffle(images); let i = 0; const slideDuration = 7000;
-    (async function init(){ try{ const first = await loadImage(folder + order[0]); A.style.backgroundImage = `url(${first})`; A.classList.add('active'); if(order.length>1){ const second = await loadImage(folder + order[1]); B.style.backgroundImage = `url(${second})`; i = 1; } runLoop(); }catch(e){ console.error(e); } })();
-    async function runLoop(){ while(true){ const nextIndex = (i + 1) % order.length; const nextSrc = folder + order[nextIndex]; try{ await loadImage(nextSrc); }catch(e){ order.splice(nextIndex,1); if(order.length===0) return; continue; } await new Promise(r=>setTimeout(r, slideDuration)); const show = showA ? B : A; const hide = showA ? A : B; show.style.backgroundImage = `url(${nextSrc})`; show.classList.add('active'); hide.classList.remove('active'); showA = !showA; i = nextIndex; }}
-  </script>
 </body>
 </html>
