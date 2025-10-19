@@ -1,32 +1,39 @@
 <!doctype html>
-<html><head>
-<meta charset='utf-8'><meta name='viewport' content='width=device-width,initial-scale=1'>
-<title>Ezzyverse • Art</title>
-<link rel="stylesheet" href="assets/header.css">
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Ezzyverse • Art</title>
+  <link rel="stylesheet" href="assets/header.css">
 </head>
 <body>
-<div id="site-header"></div>
+  <div id="site-header"></div>
 <script>
-(async () => {
-  try {
-    const el = document.getElementById('site-header');
-    const res = await fetch('partials/header.html', { cache: 'no-cache' });
-    const html = (await res.text())
-      .replace(/<script[\s\S]*?<\/script>/gi, '')
-      .replace(/<link[^>]*rel=["']stylesheet["'][^>]*>/gi, '');
-    el.innerHTML = html;
-    if (!document.querySelector('script[data-headerjs]')) {
-      const s = document.createElement('script');
-      s.src = 'assets/header.js';
-      s.dataset.headerjs = '1';
-      document.body.appendChild(s);
-    }
-  } catch (e) {
-    console.error('Header load failed', e);
+(function(){
+  if(!document.querySelector('link[href$="assets/header.css"]')){
+    const link = document.createElement('link'); link.rel='stylesheet'; link.href='assets/header.css'; document.head.appendChild(link);
   }
+  async function initHeader(){
+    const mount = document.getElementById('site-header');
+    try{
+      const res = await fetch('partials/header.html', {cache:'no-cache'});
+      if(!res.ok) throw new Error('HTTP '+res.status);
+      const text = await res.text();
+      const html = text.replace(/<script[\s\S]*?<\/script>/gi,'').replace(/<link[^>]*rel=["']stylesheet["'][^>]*>/gi,'');
+      mount.innerHTML = html;
+    }catch(e){
+      console.warn('Header fetch failed; using fallback.', e);
+      mount.innerHTML = "<header id=\"navbar\" class=\"site-header\">\n  <div class=\"logo\"><a href=\"index.html\"><img src=\"logo2.png\" alt=\"Ezzyverse logo\"></a></div>\n  <button class=\"hamburger\" id=\"hamburger\" aria-controls=\"mobileMenu\" aria-expanded=\"false\" aria-label=\"Open menu\"><span></span></button>\n  <nav class=\"desktop\">\n    <a href=\"index.html#home\">Home</a>\n    <a href=\"art.html\">Art</a>\n    <a href=\"music.html\">Music</a>\n    <a href=\"index.html#about\">About</a>\n  </nav>\n</header>\n<nav id=\"mobileMenu\" class=\"mobile-menu\" hidden>\n  <a href=\"index.html#home\">Home</a>\n  <a href=\"art.html\">Art</a>\n  <a href=\"music.html\">Music</a>\n  <a href=\"index.html#about\">About</a>\n</nav>";
+    }
+    if(!document.querySelector('script[data-headerjs]')){
+      const s = document.createElement('script'); s.src = 'assets/header.js'; s.dataset.headerjs='1'; document.body.appendChild(s);
+    }
+  }
+  initHeader();
 })();
 </script>
-<main style="margin-top:120px;text-align:center;color:white;font-family:sans-serif;">
-<h1>Art Gallery</h1><p>Explore our creative AI art collections.</p>
-</main>
-</body></html>
+  <main>
+    <h1>Art</h1><p>Static background and gallery go here later.</p>
+  </main>
+</body>
+</html>
