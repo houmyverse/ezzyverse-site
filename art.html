@@ -1,65 +1,32 @@
 <!doctype html>
-<html lang="en">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Ezzyverse • Art</title>
-  <style>
-    :root {
-      --text:#f4f6fb; --accent:#a7b6ff;
-      --overlay: linear-gradient(180deg, rgba(10,10,14,.55) 0%, rgba(10,10,14,.35) 40%, rgba(10,10,14,.65) 100%);
-      --fade-duration: 1400ms; --slide-duration: 7000ms;
-    }
-    *{ box-sizing:border-box; margin:0; padding:0; }
-    html, body{ height:100%; }
-    body{ font-family: system-ui, -apple-system, Segoe UI, Roboto, Inter, "Helvetica Neue", Arial, sans-serif; color:var(--text); background:#0b0d12; overflow-x:hidden; }
-    section{ position:relative; padding:10vh 5vw; min-height:90vh; display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center; z-index:1; }
-    .content{ width:min(92vw,980px); padding:clamp(20px,3vw,44px); border-radius:22px; backdrop-filter:blur(8px) saturate(110%); background:rgba(16,18,24,.34); box-shadow:0 10px 40px rgba(0,0,0,.35); }
-    .eyebrow{ letter-spacing:.24em; text-transform:uppercase; font-size:clamp(.72rem,1.3vw,.9rem); opacity:.8; }
-    h1{ margin:.35em 0 .2em; font-size:clamp(1.8rem,5vw,3.6rem); line-height:1.05; }
-    p{ margin:.6em auto 1.25em; font-size:clamp(1rem,1.4vw,1.15rem); max-width:65ch; opacity:.95; }
-    .cta{ display:inline-block; padding:.9em 1.15em; border-radius:14px; border:1px solid rgba(255,255,255,.18); background:rgba(255,255,255,.06); color:var(--text); text-decoration:none; font-weight:600; transition:transform .2s, background .2s; }
-    .cta:hover{ transform:translateY(-2px); background:rgba(255,255,255,.1); }
-    .bg-overlay { position:absolute; inset:0; background:var(--overlay); z-index:-3; }
-    .grain { position:absolute; inset:0; z-index:-1; pointer-events:none; background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2' stitchTiles='stitch'/><feColorMatrix type='saturate' values='0'/><feComponentTransfer><feFuncA type='table' tableValues='0 0 0 0 0 .04 .05 .04 0 0 0 0'/></feComponentTransfer></filter><rect width='100%' height='100%' filter='url(%23n)' opacity='.35'/></svg>"); mix-blend-mode:soft-light; opacity:.28; animation:shimmer 3.8s linear infinite; }
-    @keyframes shimmer { 0%{ transform:translate3d(0,0,0); } 100%{ transform:translate3d(-120px,-120px,0); } }
-    @media (prefers-reduced-motion: reduce) { .grain{ animation:none; } }
-    
-:root { --static-bg: url("images/static/art-hero.jpg"); } /* change filename/path */
-.static-bg{ position:fixed; inset:0; z-index:-2; background-image:var(--static-bg); background-size:cover; background-position:center; filter: blur(0px) brightness(0.95); animation: blurPulse 16s ease-in-out infinite; }
-.static-overlay{ position:fixed; inset:0; z-index:-1; background:var(--overlay); }
-@keyframes blurPulse{ 0%{ filter: blur(0px) brightness(0.95);} 50%{ filter: blur(2.2px) brightness(1.02);} 100%{ filter: blur(0px) brightness(0.95);} }
-@media (prefers-reduced-motion: reduce){ .static-bg{ animation:none; } }
-
-  </style>
+<html><head>
+<meta charset='utf-8'><meta name='viewport' content='width=device-width,initial-scale=1'>
+<title>Ezzyverse • Art</title>
+<link rel="stylesheet" href="assets/header.css">
 </head>
-<body data-transition="fade">
-  <div id="site-header"></div>
+<body>
+<div id="site-header"></div>
 <script>
-(async function(){
-  try{
-    const el=document.getElementById('site-header');
-    const res=await fetch('partials/header.html',{cache:'no-cache'});
-    el.innerHTML=await res.text();
-  }catch(e){ console.error('Header load failed',e); }
+(async () => {
+  try {
+    const el = document.getElementById('site-header');
+    const res = await fetch('partials/header.html', { cache: 'no-cache' });
+    const html = (await res.text())
+      .replace(/<script[\s\S]*?<\/script>/gi, '')
+      .replace(/<link[^>]*rel=["']stylesheet["'][^>]*>/gi, '');
+    el.innerHTML = html;
+    if (!document.querySelector('script[data-headerjs]')) {
+      const s = document.createElement('script');
+      s.src = 'assets/header.js';
+      s.dataset.headerjs = '1';
+      document.body.appendChild(s);
+    }
+  } catch (e) {
+    console.error('Header load failed', e);
+  }
 })();
 </script>
-<div class="static-bg"></div>
-<div class="static-overlay"></div>
-<div class="grain" aria-hidden="true"></div>
-
-  
-<section id="art">
-  <div class="content">
-    <div class="eyebrow">Our Work</div>
-    <h1>Art Collections for Print & Digital</h1>
-    <p>We create bold, clean visuals—poster art, apparel graphics, and collectible prints—built for consistency across series.</p>
-    <p><strong>Available:</strong> Limited‑run posters, t‑shirt designs, and high‑resolution digital prints. Custom colorways, sizes, and typography options by request.</p>
-    <p><strong>Highlights:</strong> Retro‑futurist posters, Persian‑inspired motifs, minimalist typographic designs, and character‑based sets.</p>
-    <a class="cta" href="index.html#about">Back to Home</a>
-  </div>
-</section>
-
-  
-</body>
-</html>
+<main style="margin-top:120px;text-align:center;color:white;font-family:sans-serif;">
+<h1>Art Gallery</h1><p>Explore our creative AI art collections.</p>
+</main>
+</body></html>
