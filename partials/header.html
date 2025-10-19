@@ -1,0 +1,36 @@
+<!-- Shared site header -->
+<link rel="stylesheet" href="assets/header.css">
+<header id="navbar" class="site-header">
+  <div class="logo">
+    <a href="index.html" aria-label="Home"><img src="logo2.png" alt="Ezzyverse logo"></a>
+  </div>
+  <!-- Desktop navigation -->
+  <nav class="desktop">
+    <a href="index.html#home">Home</a>
+    <div class="dropdown">
+      <button id="ourWorkBtn" aria-haspopup="true" aria-expanded="false">Our Work</button>
+      <div class="menu" role="menu" aria-label="Our Work">
+        <a href="art.html" role="menuitem">Art</a>
+        <a href="music.html" role="menuitem">Music</a>
+      </div>
+    </div>
+    <a href="index.html#about">About Us</a>
+  </nav>
+  <!-- Hamburger (mobile only) -->
+  <button class="hamburger" id="hamburger" aria-controls="mobileMenu" aria-expanded="false" aria-label="Open menu">
+    <span></span>
+  </button>
+</header>
+
+<!-- Mobile menu panel -->
+<nav id="mobileMenu" class="mobile-menu" hidden>
+  <a href="index.html#home">Home</a>
+  <button id="mwBtn" aria-expanded="false">Our Work</button>
+  <div id="mwSub" class="mobile-submenu">
+    <a href="art.html">Art</a>
+    <a href="music.html">Music</a>
+  </div>
+  <a href="index.html#about">About Us</a>
+</nav>
+
+<script src="assets/header.js" defer></script>
